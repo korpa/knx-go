@@ -313,6 +313,7 @@ func (d DPT_9005) Pack() []byte {
 
 func (d *DPT_9005) Unpack(data []byte) error {
 	var value float32
+<<<<<<< HEAD
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -326,6 +327,21 @@ func (d *DPT_9005) Unpack(data []byte) error {
 
 	*d = DPT_9005(value)
 
+=======
+
+	if err := unpackF16(data, &value); err != nil {
+		return err
+	}
+
+	// Check the value for valid range
+	if value < 0 {
+		return fmt.Errorf("Wind speed \"%.2f\" outside range [0, 670760]", value)
+	} else if value > 670760 {
+		return fmt.Errorf("Wind speed \"%.2f\" outside range [0, 670760]", value)
+	}
+
+	*d = DPT_9005(value)
+>>>>>>> 6ed2bf1e51e608348dc8920e7503156dd786516a
 	return nil
 }
 
@@ -352,6 +368,10 @@ func (d DPT_9007) Pack() []byte {
 
 func (d *DPT_9007) Unpack(data []byte) error {
 	var value float32
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ed2bf1e51e608348dc8920e7503156dd786516a
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -545,35 +565,74 @@ func (d DPT_13015) String() string {
 	return fmt.Sprintf("%d kVARh", int32(d))
 }
 
-//03_07_02 Datapoint Types v01.08.02 AS.pdf
-//==============================================
-//
-//3.18 Datapoint Type Scene Number
-//Format:  1 octet: r2U6
-// => Trying with U8
-
-// DPT_17001 represents DPT 17.001 .
+// DPT_17001 represents DPT 17.001 / Scene Number.
 type DPT_17001 uint8
 
 func (d DPT_17001) Pack() []byte {
-
-	if d <= 0 {
-		return packU8(0)
-	} else if d >= 63 {
-		return packU8(255)
+	if d > 63 {
+		return packU8(63)
 	} else {
 		return packU8(uint8(d))
 	}
 }
 
 func (d *DPT_17001) Unpack(data []byte) error {
-	return unpackU8(data, (*uint8)(d))
+	var value uint8
+
+	if err := unpackU8(data, &value); err != nil {
+		return err
+	}
+
+	if *d <= 63 {
+		*d = DPT_17001(value)
+		return nil
+	} else {
+		*d = DPT_17001(63)
+		return nil
+	}
 }
 
 func (d DPT_17001) Unit() string {
-	return "scene"
+	return ""
 }
 
 func (d DPT_17001) String() string {
-	return fmt.Sprintf("%d scene", d)
+	return fmt.Sprintf("%d", uint8(d))
+}
+
+// DPT_18001 represents DPT 18.001 / Scene Control.
+type DPT_18001 uint8
+
+func (d DPT_18001) Pack() []byte {
+	if d <= 63 || (d >= 128 && d <= 191) {
+		return packU8(uint8(d))
+	} else {
+		return packU8(63)
+	}
+}
+
+func (d *DPT_18001) Unpack(data []byte) error {
+	var value uint8
+
+	if err := unpackU8(data, &value); err != nil {
+		return err
+	}
+
+	if *d <= 63 || (*d >= 128 && *d <= 191) {
+		*d = DPT_18001(value)
+		return nil
+	} else {
+		*d = DPT_18001(63)
+		return nil
+	}
+}
+
+func (d DPT_18001) Unit() string {
+	return ""
+}
+
+// KNX Association recommends to display the scene numbers [1..64].
+// See note 6 of the KNX Specifications v2.1.
+func (d DPT_18001) String() string {
+	return fmt.Sprintf("%d", uint8(d))
 }
