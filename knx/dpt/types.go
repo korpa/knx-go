@@ -313,21 +313,6 @@ func (d DPT_9005) Pack() []byte {
 
 func (d *DPT_9005) Unpack(data []byte) error {
 	var value float32
-<<<<<<< HEAD
-	if err := unpackF16(data, &value); err != nil {
-		return err
-	}
-
-	// Check the value for valid range
-	if value < 0 {
-		return fmt.Errorf("Wind speed \"%.2f\" outside range [0, 670760]", value)
-	} else if value > 670760 {
-		return fmt.Errorf("Wind speed \"%.2f\" outside range [0, 670760]", value)
-	}
-
-	*d = DPT_9005(value)
-
-=======
 
 	if err := unpackF16(data, &value); err != nil {
 		return err
@@ -341,7 +326,6 @@ func (d *DPT_9005) Unpack(data []byte) error {
 	}
 
 	*d = DPT_9005(value)
->>>>>>> 6ed2bf1e51e608348dc8920e7503156dd786516a
 	return nil
 }
 
@@ -368,10 +352,6 @@ func (d DPT_9007) Pack() []byte {
 
 func (d *DPT_9007) Unpack(data []byte) error {
 	var value float32
-<<<<<<< HEAD
-=======
-
->>>>>>> 6ed2bf1e51e608348dc8920e7503156dd786516a
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
